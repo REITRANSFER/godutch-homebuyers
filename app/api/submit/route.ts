@@ -51,7 +51,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: "Invalid email" }, { status: 400 })
     }
 
-    if (!(data.name || "").trim()) {
+    // Support both firstName/lastName (new) and name (legacy)
+    if (!(data.firstName || data.name || "").trim()) {
       return NextResponse.json({ success: false, error: "Name required" }, { status: 400 })
     }
 

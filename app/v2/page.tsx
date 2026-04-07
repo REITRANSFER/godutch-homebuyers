@@ -7,7 +7,7 @@ import { SalesLetterSection } from "@/components/v2/sales-letter-section";
 import { FaqSection } from "@/components/v2/faq-section";
 import { FooterSection } from "@/components/v2/footer-section";
 
-export default function HomePage() {
+export default function V2Page() {
   return (
     <main className="v2-light min-h-screen">
       <Header />

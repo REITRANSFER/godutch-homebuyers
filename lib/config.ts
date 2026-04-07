@@ -1,48 +1,32 @@
-/**
- * lib/config.ts — Single server-side env var read point.
- * Import this ONLY in server components (layout.tsx, page.tsx, API routes).
- * Never import in "use client" components — pass values as props instead.
- */
-const config = {
-  // Brand
-  companyName:     process.env.COMPANY_NAME     ?? "Your Home Buyers",
-  phoneDisplay:    process.env.PHONE_DISPLAY     ?? "(800) 000-0000",
-  phoneHref:       process.env.PHONE_HREF        ?? "8000000000",
-  accentColor:     process.env.ACCENT_COLOR      ?? "#2563eb",
-  headerBgColor:   process.env.HEADER_BG_COLOR   ?? "#ffffff",
-  logoUrl:         process.env.LOGO_URL          ?? "",
+export function getConfig() {
+  const parseJSON = (val: string | undefined, fallback: unknown) => {
+    if (!val) return fallback;
+    try { return JSON.parse(val); } catch { return fallback; }
+  };
 
-  // Owner / personalization
-  ownerName:       process.env.OWNER_NAME        ?? "",
-  headshotUrl:     process.env.HEADSHOT_URL      ?? "",
-
-  // Hero
-  headline:        process.env.HEADLINE          ?? "Sell Your House Fast For Cash",
-  headlineAccent:  process.env.HEADLINE_ACCENT   ?? "",
-  subheadline:     process.env.SUBHEADLINE       ?? "No fees. No repairs. Cash offer in 24 hours.",
-
-  // Service areas — JSON array of {id, centerLat, centerLng, radiusMiles}
-  serviceAreas:    process.env.SERVICE_AREAS     ?? "[]",
-
-  // Trust indicators
-  stat1Value:      process.env.STAT_1_VALUE      ?? "1,000+",
-  stat1Label:      process.env.STAT_1_LABEL      ?? "Homes Purchased",
-  stat2Value:      process.env.STAT_2_VALUE      ?? "10+",
-  stat2Label:      process.env.STAT_2_LABEL      ?? "Years in Business",
-  stat3Value:      process.env.STAT_3_VALUE      ?? "24 Hrs",
-  stat3Label:      process.env.STAT_3_LABEL      ?? "Cash Offer",
-
-  // SEO
-  metaTitle:       process.env.META_TITLE        ?? "Sell Your House Fast For Cash",
-  metaDescription: process.env.META_DESCRIPTION  ?? "Get a fair cash offer for your home in 24 hours. No fees, no repairs, no hassle.",
-
-  // Footer
-  privacyPolicyUrl: process.env.PRIVACY_POLICY_URL ?? "/privacy",
-  termsUrl:         process.env.TERMS_URL           ?? "/terms",
-
-  // Webhook (server-side only — never exposed to browser)
-  webhookUrl:      process.env.WEBHOOK_URL ?? "",
-} as const
-
-export default config
-export type Config = typeof config
+  return {
+    companyName: process.env.NEXT_PUBLIC_COMPANY_NAME || "Your Company Name",
+    phoneDisplay: process.env.NEXT_PUBLIC_PHONE_DISPLAY || "(555) 000-0000",
+    phoneHref: process.env.NEXT_PUBLIC_PHONE_HREF || "5550000000",
+    companyDomain: process.env.NEXT_PUBLIC_COMPANY_DOMAIN || "example.com",
+    ownerName: process.env.NEXT_PUBLIC_OWNER_NAME || "Our Team",
+    serviceArea: process.env.NEXT_PUBLIC_SERVICE_AREA || "Your Area",
+    serviceStates: (process.env.NEXT_PUBLIC_SERVICE_STATES || "").split(",").filter(Boolean),
+    serviceBounds: parseJSON(process.env.NEXT_PUBLIC_SERVICE_BOUNDS, null) as { south: number; north: number; west: number; east: number } | null,
+    accentColor: process.env.NEXT_PUBLIC_ACCENT_COLOR || "#2563eb",
+    logoUrl: process.env.NEXT_PUBLIC_LOGO_URL || "/placeholder-logo.svg",
+    headline: process.env.NEXT_PUBLIC_HEADLINE || "Sell Your House Fast for Cash.",
+    headlineAccent: process.env.NEXT_PUBLIC_HEADLINE_ACCENT || "No Repairs. No Fees.",
+    subheadline: process.env.NEXT_PUBLIC_SUBHEADLINE || "Get a fair cash offer within 24 hours. We help homeowners sell their homes fast for cash.",
+    metaTitle: process.env.NEXT_PUBLIC_META_TITLE || "Sell Your House Fast for Cash",
+    metaDescription: process.env.NEXT_PUBLIC_META_DESCRIPTION || "Get a fair, no-obligation cash offer on your home within 24 hours.",
+    stat1Value: process.env.NEXT_PUBLIC_STAT_1_VALUE || "500+",
+    stat1Label: process.env.NEXT_PUBLIC_STAT_1_LABEL || "Homes Bought",
+    stat2Value: process.env.NEXT_PUBLIC_STAT_2_VALUE || "10+",
+    stat2Label: process.env.NEXT_PUBLIC_STAT_2_LABEL || "Years Experience",
+    stat3Value: process.env.NEXT_PUBLIC_STAT_3_VALUE || "5-Star",
+    stat3Label: process.env.NEXT_PUBLIC_STAT_3_LABEL || "Google Rating",
+    stat4Value: process.env.NEXT_PUBLIC_STAT_4_VALUE || "A+",
+    stat4Label: process.env.NEXT_PUBLIC_STAT_4_LABEL || "BBB Rating",
+  };
+}
