@@ -9,4 +9,4 @@ const nextConfig = {
 }
 
 export default nextConfig
-// rebuild: service area → Albuquerque NM
+// rebuild: pixel + NM service area 2026-04-08
