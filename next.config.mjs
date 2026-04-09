@@ -9,4 +9,4 @@ const nextConfig = {
 }
 
 export default nextConfig
-// rebuild: pixel + NM service area 2026-04-08
+// rebuild: revert to Houston TX + pixel 2026-04-08
