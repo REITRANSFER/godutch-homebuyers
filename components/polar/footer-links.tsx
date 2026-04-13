@@ -15,6 +15,8 @@ export function FooterLinks() {
             <span className="text-gray-300">|</span>
             <Link href="/terms" className="transition-colors hover:text-gray-900">Terms of Service</Link>
             <span className="text-gray-300">|</span>
+            <Link href="/sms-terms" className="transition-colors hover:text-gray-900">SMS Terms</Link>
+            <span className="text-gray-300">|</span>
             <a href={`tel:${config.phoneHref}`} className="transition-colors hover:text-gray-900">{config.phoneDisplay}</a>
           </div>
           <p className="text-xs text-gray-400">&copy; {new Date().getFullYear()} {config.companyName}. All rights reserved.</p>

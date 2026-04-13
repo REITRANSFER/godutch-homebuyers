@@ -170,6 +170,8 @@ export function SurveyCard({ initialAddress }: SurveyCardProps = {}) {
     getIPAddress().then((ip) => { trackingRef.current.ip = ip })
   }, [])
   const [honeypot, setHoneypot] = useState("")
+  // SMS consent (A2P 10DLC compliance) - unchecked by default, optional
+  const [smsConsent, setSmsConsent] = useState(false)
 
   const totalSteps = 9
 
@@ -208,6 +210,8 @@ export function SurveyCard({ initialAddress }: SurveyCardProps = {}) {
         const payload = {
           ...surveyData,
           ...trackingRef.current,
+          smsConsent: smsConsent,
+          smsConsentTimestamp: smsConsent ? new Date().toISOString() : null,
           source: `${config.companyName} - Survey`,
           submittedAt: new Date().toISOString(),
         }
@@ -575,6 +579,20 @@ export function SurveyCard({ initialAddress }: SurveyCardProps = {}) {
                   className={`h-14 text-lg rounded-xl border-[#E2E8F0] bg-white text-[#0F1D2F] placeholder:text-[#94A3B8] focus:border-[#1B2A4A] focus:ring-[#1B2A4A]/20 ${validationErrors.phone ? "border-red-500" : ""}`}
                 />
                 {validationErrors.phone && <p className="mt-1 text-xs text-red-500">{validationErrors.phone}</p>}
+              </div>
+              {/* SMS Consent - A2P 10DLC compliance */}
+              <div className="rounded-xl border border-[#E2E8F0] bg-[#F5F7FA] p-4">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={smsConsent}
+                    onChange={(e) => setSmsConsent(e.target.checked)}
+                    className="mt-1 h-4 w-4 shrink-0 rounded border-[#CBD5E1] text-[#1B2A4A] focus:ring-[#1B2A4A]"
+                  />
+                  <span className="text-xs leading-relaxed text-[#5A6B7D]">
+                    By checking this box, I agree to receive text messages from GoDutch Homebuyers at the phone number provided above regarding my property inquiry, cash offer details, and appointment reminders. Message frequency varies. Message and data rates may apply. Reply HELP for help, STOP to cancel. Consent is not a condition of any service. View our <a href="/sms-terms" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#0F1D2F]">SMS Terms</a> and <a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#0F1D2F]">Privacy Policy</a>.
+                  </span>
+                </label>
               </div>
               <input
                 type="text"
