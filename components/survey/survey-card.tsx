@@ -188,8 +188,9 @@ export function SurveyCard() {
   }, [])
   // Honeypot field for spam prevention
   const [honeypot, setHoneypot] = useState("")
-  // SMS consent (A2P 10DLC compliance) - unchecked by default, optional
-  const [smsConsent, setSmsConsent] = useState(false)
+  // SMS consent (A2P 10DLC compliance) - two separate checkboxes, unchecked by default, optional
+  const [smsConsentTransactional, setSmsConsentTransactional] = useState(false)
+  const [smsConsentMarketing, setSmsConsentMarketing] = useState(false)
   // Out of service area popup
   const [showOutOfAreaPopup, setShowOutOfAreaPopup] = useState(false)
   const [selectedState, setSelectedState] = useState("")
@@ -247,8 +248,9 @@ export function SurveyCard() {
           condition: surveyData.condition,
           timeline: surveyData.timeline,
           reason: surveyData.reason,
-          smsConsent: smsConsent,
-          smsConsentTimestamp: smsConsent ? new Date().toISOString() : null,
+          smsConsentTransactional: smsConsentTransactional,
+          smsConsentMarketing: smsConsentMarketing,
+          smsConsentTimestamp: (smsConsentTransactional || smsConsentMarketing) ? new Date().toISOString() : null,
           source: '__COMPANY_NAME__ - Survey',
           submittedAt: new Date().toISOString(),
           ...trackingRef.current,
@@ -632,19 +634,33 @@ export function SurveyCard() {
                 />
                 {validationErrors.phone && <p className="mt-1 text-xs text-red-500">{validationErrors.phone}</p>}
               </div>
-              {/* SMS Consent - A2P 10DLC compliance */}
-              <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+              {/* SMS Consent - A2P 10DLC compliance (two separate checkboxes) */}
+              <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 space-y-3">
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={smsConsent}
-                    onChange={(e) => setSmsConsent(e.target.checked)}
+                    checked={smsConsentTransactional}
+                    onChange={(e) => setSmsConsentTransactional(e.target.checked)}
                     className="mt-1 h-4 w-4 shrink-0 rounded border-gray-300 text-[#0891b2] focus:ring-[#0891b2]"
                   />
                   <span className="text-xs leading-relaxed text-gray-600">
-                    By checking this box, I agree to receive text messages from GoDutch Homebuyers at the phone number provided above regarding my property inquiry, cash offer details, and appointment reminders. Message frequency varies. Message and data rates may apply. Reply HELP for help, STOP to cancel. Consent is not a condition of any service. View our <a href="/sms-terms" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-900">SMS Terms</a> and <a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-900">Privacy Policy</a>.
+                    I consent to receive non-marketing text messages from <strong>GoDutch Homebuyers LLC</strong> about appointment scheduling, appointment confirmations, reminders, and follow-ups. Message frequency may vary, message &amp; data rates may apply. Text HELP for assistance, reply STOP to opt out.
                   </span>
                 </label>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={smsConsentMarketing}
+                    onChange={(e) => setSmsConsentMarketing(e.target.checked)}
+                    className="mt-1 h-4 w-4 shrink-0 rounded border-gray-300 text-[#0891b2] focus:ring-[#0891b2]"
+                  />
+                  <span className="text-xs leading-relaxed text-gray-600">
+                    I consent to receive marketing text messages, about special offers, discounts, and service updates, from <strong>GoDutch Homebuyers LLC</strong> at the phone number provided. Message frequency may vary. Message &amp; data rates may apply. Text HELP for assistance, reply STOP to opt out.
+                  </span>
+                </label>
+                <p className="text-[11px] leading-relaxed text-gray-500 pt-2 border-t border-gray-200">
+                  Consent is not a condition of any service. View our <a href="/sms-terms" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-700">SMS Terms</a> and <a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-700">Privacy Policy</a>.
+                </p>
               </div>
               {/* Honeypot field - hidden from users, bots will fill it */}
               <input

@@ -36,7 +36,8 @@ export default function OptInPage() {
   const [lastName, setLastName] = useState("")
   const [phone, setPhone] = useState("")
   const [email, setEmail] = useState("")
-  const [smsConsent, setSmsConsent] = useState(false)
+  const [smsConsentTransactional, setSmsConsentTransactional] = useState(false)
+  const [smsConsentMarketing, setSmsConsentMarketing] = useState(false)
   const [honeypot, setHoneypot] = useState("")
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -56,7 +57,7 @@ export default function OptInPage() {
     if (!lastName.trim()) newErrors.lastName = "Last name is required."
     if (!validatePhone(phone)) newErrors.phone = "Please enter a valid 10-digit US phone number."
     if (email && !validateEmail(email)) newErrors.email = "Please enter a valid email address."
-    if (!smsConsent) newErrors.smsConsent = "You must agree to receive text messages to sign up."
+    if (!smsConsentTransactional && !smsConsentMarketing) newErrors.smsConsent = "Please check at least one box to receive text messages."
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors)
@@ -77,7 +78,8 @@ export default function OptInPage() {
         name: `${firstName} ${lastName}`,
         phone,
         email,
-        smsConsent: true,
+        smsConsentTransactional,
+        smsConsentMarketing,
         smsConsentTimestamp: new Date().toISOString(),
         source: `${config.companyName} - SMS Opt-In`,
         submittedAt: new Date().toISOString(),
@@ -176,20 +178,37 @@ export default function OptInPage() {
                 {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
               </div>
 
-              {/* SMS Consent - A2P 10DLC compliance */}
-              <div className={`rounded-xl border p-4 ${errors.smsConsent ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50"}`}>
+              {/* SMS Consent - A2P 10DLC compliance (two separate checkboxes) */}
+              <div className={`rounded-xl border p-4 space-y-4 ${errors.smsConsent ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50"}`}>
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={smsConsent}
-                    onChange={(e) => { setSmsConsent(e.target.checked); setErrors({ ...errors, smsConsent: "" }) }}
+                    checked={smsConsentTransactional}
+                    onChange={(e) => { setSmsConsentTransactional(e.target.checked); setErrors({ ...errors, smsConsent: "" }) }}
                     className="mt-1 h-4 w-4 shrink-0 rounded border-gray-300 text-[#0891b2] focus:ring-[#0891b2]"
                   />
                   <span className="text-xs leading-relaxed text-gray-700">
-                    By checking this box, I agree to receive recurring text messages from <strong>GoDutch Homebuyers LLC</strong> at the phone number provided above, including cash offer details, appointment reminders, and follow-ups regarding my property inquiry. Message frequency varies (typically up to 5 messages per month). Message and data rates may apply. Reply <strong>HELP</strong> for help or <strong>STOP</strong> to cancel at any time. Consent is not a condition of any purchase or service. View our <Link href="/sms-terms" className="underline hover:text-gray-900">SMS Terms &amp; Conditions</Link> and <Link href="/privacy" className="underline hover:text-gray-900">Privacy Policy</Link>.
+                    I consent to receive non-marketing text messages from <strong>GoDutch Homebuyers LLC</strong> about appointment scheduling, appointment confirmations, reminders, and follow-ups. Message frequency may vary, message &amp; data rates may apply. Text HELP for assistance, reply STOP to opt out.
                   </span>
                 </label>
-                {errors.smsConsent && <p className="mt-2 text-xs text-red-600 ml-7">{errors.smsConsent}</p>}
+
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={smsConsentMarketing}
+                    onChange={(e) => { setSmsConsentMarketing(e.target.checked); setErrors({ ...errors, smsConsent: "" }) }}
+                    className="mt-1 h-4 w-4 shrink-0 rounded border-gray-300 text-[#0891b2] focus:ring-[#0891b2]"
+                  />
+                  <span className="text-xs leading-relaxed text-gray-700">
+                    I consent to receive marketing text messages, about special offers, discounts, and service updates, from <strong>GoDutch Homebuyers LLC</strong> at the phone number provided. Message frequency may vary. Message &amp; data rates may apply. Text HELP for assistance, reply STOP to opt out.
+                  </span>
+                </label>
+
+                <p className="text-[11px] leading-relaxed text-gray-500 pt-2 border-t border-gray-200">
+                  Consent is not a condition of any purchase or service. View our <Link href="/sms-terms" className="underline hover:text-gray-700">SMS Terms &amp; Conditions</Link> and <Link href="/privacy" className="underline hover:text-gray-700">Privacy Policy</Link>.
+                </p>
+
+                {errors.smsConsent && <p className="text-xs text-red-600">{errors.smsConsent}</p>}
               </div>
 
               {/* Honeypot */}
