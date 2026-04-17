@@ -200,14 +200,6 @@ export function SurveyCard({ initialAddress }: SurveyCardProps = {}) {
       setIsSubmitting(true)
 
       try {
-        // Fire Meta Lead event
-        if (typeof window !== "undefined" && (window as unknown as Record<string, unknown>).fbq) {
-          (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "Lead", {
-            content_name: "Express Homebuyer Survey",
-            content_category: "real_estate",
-          })
-        }
-
         const payload = {
           ...surveyData,
           ...trackingRef.current,
