@@ -6,7 +6,7 @@ import { FooterLinks } from "@/components/polar/footer-links"
 import { getConfig } from "@/lib/config"
 
 const config = getConfig()
-const heroVideoUrl = process.env.NEXT_PUBLIC_HERO_VIDEO_URL || ""
+const thankYouVideoUrl = process.env.NEXT_PUBLIC_THANK_YOU_VIDEO_URL || process.env.NEXT_PUBLIC_HERO_VIDEO_URL || ""
 
 export default function ThankYouPage() {
   useEffect(() => {
@@ -25,13 +25,13 @@ export default function ThankYouPage() {
         </div>
       </div>
 
-      {heroVideoUrl && (
+      {thankYouVideoUrl && (
         <section className="bg-white px-6 py-16 md:py-24">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-[#0F1D2F] mb-2 text-center">See How It Works</h2>
-            <p className="text-center text-[#5A6B7D] text-lg mb-8">Watch how {config.companyName} makes selling your home fast and stress-free.</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-[#0F1D2F] mb-2 text-center">Who We Are For</h2>
+            <p className="text-center text-[#5A6B7D] text-lg mb-8">A quick message from {config.companyName} about how we help homeowners.</p>
             <div className="rounded-2xl overflow-hidden shadow-lg border border-[#E2E8F0]">
-              <video src={heroVideoUrl} autoPlay muted loop playsInline controls className="w-full" style={{ aspectRatio: "16/9", objectFit: "cover" }} />
+              <video src={thankYouVideoUrl} controls playsInline className="w-full" style={{ aspectRatio: "16/9", objectFit: "cover" }} />
             </div>
           </div>
         </section>
