@@ -7,6 +7,7 @@ import { captureTrackingData, getIPAddress } from "@/lib/tracking"
 import { Input } from "@/components/ui/input"
 import { AddressAutocomplete, type AddressDetails } from "@/components/survey/address-autocomplete"
 import { getConfig } from "@/lib/config"
+import { getAttribution } from "@/lib/utm-capture"
 
 const config = getConfig()
 
@@ -200,9 +201,11 @@ export function SurveyCard({ initialAddress }: SurveyCardProps = {}) {
       setIsSubmitting(true)
 
       try {
+        const attribution = getAttribution()
         const payload = {
           ...surveyData,
           ...trackingRef.current,
+          ...attribution,
           smsConsentTransactional: smsConsentTransactional,
           smsConsentMarketing: smsConsentMarketing,
           smsConsentTimestamp: (smsConsentTransactional || smsConsentMarketing) ? new Date().toISOString() : null,
