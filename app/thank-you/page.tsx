@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { CheckCircle2, Phone, Clock, Shield } from "lucide-react"
 import { FooterLinks } from "@/components/polar/footer-links"
 import { getConfig } from "@/lib/config"
@@ -8,7 +8,20 @@ import { getConfig } from "@/lib/config"
 const config = getConfig()
 const thankYouVideoUrl = process.env.NEXT_PUBLIC_THANK_YOU_VIDEO_URL || process.env.NEXT_PUBLIC_HERO_VIDEO_URL || ""
 
+const faqVideos = [
+  { url: process.env.NEXT_PUBLIC_FAQ_VIDEO_1_URL || "", label: process.env.NEXT_PUBLIC_FAQ_VIDEO_1_LABEL || "How does the process work?" },
+  { url: process.env.NEXT_PUBLIC_FAQ_VIDEO_2_URL || "", label: process.env.NEXT_PUBLIC_FAQ_VIDEO_2_LABEL || "How fast can you close?" },
+  { url: process.env.NEXT_PUBLIC_FAQ_VIDEO_3_URL || "", label: process.env.NEXT_PUBLIC_FAQ_VIDEO_3_LABEL || "Do I need to make repairs?" },
+  { url: process.env.NEXT_PUBLIC_FAQ_VIDEO_4_URL || "", label: process.env.NEXT_PUBLIC_FAQ_VIDEO_4_LABEL || "Are there any fees or commissions?" },
+  { url: process.env.NEXT_PUBLIC_FAQ_VIDEO_5_URL || "", label: process.env.NEXT_PUBLIC_FAQ_VIDEO_5_LABEL || "How is my offer calculated?" },
+  { url: process.env.NEXT_PUBLIC_FAQ_VIDEO_6_URL || "", label: process.env.NEXT_PUBLIC_FAQ_VIDEO_6_LABEL || "What types of homes do you buy?" },
+  { url: process.env.NEXT_PUBLIC_FAQ_VIDEO_7_URL || "", label: process.env.NEXT_PUBLIC_FAQ_VIDEO_7_LABEL || "Can I sell if I'm behind on payments?" },
+  { url: process.env.NEXT_PUBLIC_FAQ_VIDEO_8_URL || "", label: process.env.NEXT_PUBLIC_FAQ_VIDEO_8_LABEL || "What happens after I accept?" },
+].filter(v => v.url)
+
 export default function ThankYouPage() {
+  const [activeFaq, setActiveFaq] = useState(0)
+
   useEffect(() => {
     try { if (window.fbq) window.fbq("track", "Lead") } catch {}
   }, [])
@@ -32,6 +45,42 @@ export default function ThankYouPage() {
             <p className="text-center text-[#5A6B7D] text-lg mb-8">A quick message from {config.companyName} about how we help homeowners.</p>
             <div className="rounded-2xl overflow-hidden shadow-lg border border-[#E2E8F0]">
               <video src={thankYouVideoUrl} controls playsInline className="w-full" style={{ aspectRatio: "16/9", objectFit: "cover" }} />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {faqVideos.length > 0 && (
+        <section className="bg-white px-6 py-16 md:py-24">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-bold text-[#0F1D2F] mb-2 text-center">Frequently Asked Questions</h2>
+            <p className="text-center text-[#5A6B7D] text-lg mb-8">Pick a topic and watch the video that answers your question.</p>
+            <div className="flex flex-wrap gap-2 justify-center mb-6">
+              {faqVideos.map((faq, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setActiveFaq(i)}
+                  className="text-sm font-semibold px-4 py-2 rounded-full border transition-all"
+                  style={
+                    activeFaq === i
+                      ? { backgroundColor: "var(--accent-brand)", borderColor: "var(--accent-brand)", color: "#fff" }
+                      : { backgroundColor: "#fff", borderColor: "#e2e8f0", color: "#4b5563" }
+                  }
+                >
+                  {faq.label}
+                </button>
+              ))}
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow-lg border border-[#E2E8F0] bg-black">
+              <video
+                key={faqVideos[activeFaq]?.url}
+                src={faqVideos[activeFaq]?.url}
+                controls
+                playsInline
+                className="w-full"
+                style={{ aspectRatio: "16/9", objectFit: "cover" }}
+              />
             </div>
           </div>
         </section>
