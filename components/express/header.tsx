@@ -5,6 +5,9 @@ import Image from "next/image"
 import { Phone, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
+import { getConfig } from "@/lib/config"
+
+const config = getConfig()
 
 const NAV_LINKS = [
   { label: "How It Works", href: "#how-it-works" },
@@ -53,11 +56,11 @@ export function Header() {
         {/* Phone and CTA */}
         <div className="hidden items-center gap-4 lg:flex">
           <a
-            href="tel:8882984807"
+            href={`tel:${config.phoneHref}`}
             className="flex items-center gap-2 text-sm font-semibold text-white"
           >
             <Phone className="h-4 w-4" />
-            __COMPANY_NAME__
+            {config.phoneDisplay}
           </a>
           <Button className="bg-[#22c55e] font-semibold text-white hover:bg-[#16a34a]">
             Get My Cash Offer
@@ -88,11 +91,11 @@ export function Header() {
               </Link>
             ))}
             <a
-              href="tel:8882984807"
+              href={`tel:${config.phoneHref}`}
               className="flex items-center gap-2 py-3 text-sm font-semibold text-white"
             >
               <Phone className="h-4 w-4" />
-              __COMPANY_NAME__
+              {config.phoneDisplay}
             </a>
             <Button className="mt-3 bg-[#22c55e] font-semibold text-white hover:bg-[#16a34a]">
               Get My Cash Offer

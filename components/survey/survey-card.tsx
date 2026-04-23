@@ -4,6 +4,9 @@ import { useState, useRef, useEffect } from "react"
 import { Home, ArrowRight, ArrowLeft, ArrowDown, Check, XCircle, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { captureTrackingData, getIPAddress } from "@/lib/tracking"
+import { getConfig } from "@/lib/config"
+
+const config = getConfig()
 import { Input } from "@/components/ui/input"
 import { AddressAutocomplete, type AddressDetails } from "./address-autocomplete"
 import {
@@ -251,7 +254,7 @@ export function SurveyCard() {
           smsConsentTransactional: smsConsentTransactional,
           smsConsentMarketing: smsConsentMarketing,
           smsConsentTimestamp: (smsConsentTransactional || smsConsentMarketing) ? new Date().toISOString() : null,
-          source: '__COMPANY_NAME__ - Survey',
+          source: `${config.companyName} - Survey`,
           submittedAt: new Date().toISOString(),
           ...trackingRef.current,
         }
@@ -410,10 +413,10 @@ export function SurveyCard() {
             <p className="mt-4 text-sm text-gray-500">{msg.detail}</p>
           </div>
           <a
-            href="tel:8882984807"
+            href={`tel:${config.phoneHref}`}
             className="mt-2 inline-flex items-center gap-2 rounded-xl bg-[#0891b2] px-6 py-3 text-white hover:bg-[#0e7490] transition-colors"
           >
-            Call Us: __COMPANY_NAME__
+            Call Us: {config.phoneDisplay}
           </a>
         </div>
       </div>
@@ -737,8 +740,8 @@ export function SurveyCard() {
             </Button>
             <p className="text-center text-xs text-gray-500">
               If you believe this is an error, please call us at{" "}
-              <a href="tel:8882984807" className="font-medium text-[#0891b2] hover:underline">
-                __COMPANY_NAME__
+              <a href={`tel:${config.phoneHref}`} className="font-medium text-[#0891b2] hover:underline">
+                {config.phoneDisplay}
               </a>
             </p>
           </div>
