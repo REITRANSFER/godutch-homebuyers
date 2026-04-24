@@ -40,7 +40,7 @@ export default function ThankYouPage() {
         <section className="bg-white px-6 py-16 md:py-24">
           <div className="max-w-4xl mx-auto">
             <div className="rounded-2xl overflow-hidden shadow-lg border border-[#E2E8F0]">
-              <video src={thankYouVideoUrl} controls playsInline className="w-full" style={{ aspectRatio: "16/9", objectFit: "cover" }} />
+              <video src={thankYouVideoUrl} controls playsInline preload="metadata" className="w-full" style={{ aspectRatio: "16/9", objectFit: "cover" }} />
             </div>
           </div>
         </section>
@@ -58,6 +58,7 @@ export default function ThankYouPage() {
                     src={url}
                     controls
                     playsInline
+                    preload="metadata"
                     className="w-full"
                     style={{ aspectRatio: "16/9", objectFit: "cover" }}
                   />
