@@ -24,6 +24,20 @@ export default function ThankYouPage() {
     try { if (window.fbq) window.fbq("track", "Lead") } catch {}
   }, [])
 
+  useEffect(() => {
+    const videos = Array.from(document.querySelectorAll("video"))
+    videos.forEach((video) => {
+      const wasMuted = video.muted
+      video.muted = true
+      video.currentTime = 0.001
+      const onSeeked = () => {
+        video.muted = wasMuted
+        video.removeEventListener("seeked", onSeeked)
+      }
+      video.addEventListener("seeked", onSeeked)
+    })
+  }, [])
+
   return (
     <main className="relative min-h-screen bg-gray-50">
       <div className="py-16 md:py-24" style={{ background: "linear-gradient(to bottom, color-mix(in srgb, var(--accent-brand) 10%, transparent), transparent)" }}>
