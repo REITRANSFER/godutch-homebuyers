@@ -21,10 +21,6 @@ const faqVideos = [
 
 export default function ThankYouPage() {
   useEffect(() => {
-    try { if (window.fbq) window.fbq("track", "Lead") } catch {}
-  }, [])
-
-  useEffect(() => {
     const videos = Array.from(document.querySelectorAll("video"))
     videos.forEach((video) => {
       const wasMuted = video.muted
