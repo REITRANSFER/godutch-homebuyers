@@ -446,10 +446,8 @@ export function SurveyCard() {
       setShowOutOfAreaPopup(true)
       return
     }
-
-    setAddressVerified(true)
-
     // Auto-advance to next step after address selection (only if in Houston metro)
+    setAddressVerified(true)
     setTimeout(() => {
       setStep(2)
     }, 300)

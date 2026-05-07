@@ -346,8 +346,6 @@ export function SurveyCard({ initialAddress }: SurveyCardProps = {}) {
 
   const handleAddressSelect = (address: string, details: AddressDetails) => {
     setSurveyData({ ...surveyData, address })
-    setAddressVerified(true)
-
     const state = details.state?.toUpperCase() || ""
     const county = details.county || ""
 
@@ -357,9 +355,12 @@ export function SurveyCard({ initialAddress }: SurveyCardProps = {}) {
       ? config.serviceCounties.some(c => countyLower.includes(c))
       : (!config.serviceArea || config.serviceArea === "Your Area" || countyLower.includes(config.serviceArea.toLowerCase()))
     if (stateOk && countyOk) {
+      setAddressVerified(true)
       setTimeout(() => { setStep(2) }, 300)
       return
     }
+
+    setAddressVerified(false)
 
     setTimeout(() => { setDisqualifyReason("outsideArea"); setIsDisqualified(true) }, 300)
   }
