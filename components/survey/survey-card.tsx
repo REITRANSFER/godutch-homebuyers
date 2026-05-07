@@ -117,13 +117,35 @@ function disqualifyReasonFor(d: SurveyData): string {
 }
 // ──────────────────────────────────────────────────────────────────────
 
-// Service area states
-const SERVICE_AREA_STATES = ["CA"]
+// Houston metro geofence — 60-mile radius around downtown Houston covers all 9
+// MSA counties (Harris, Fort Bend, Montgomery, Brazoria, Galveston, Liberty,
+// Chambers, Waller, Austin TX) without bleeding into Beaumont or College Station.
+const HOUSTON_CENTER_LAT = 29.7604
+const HOUSTON_CENTER_LNG = -95.3698
+const HOUSTON_RADIUS_MILES = 60
 
-// Check if address is in service area
-const isInServiceArea = (state: string | undefined): boolean => {
-  if (!state) return false
-  SERVICE_AREA_STATES.includes(state.toUpperCase())
+// Bounding box for Google Places autocomplete bias (Houston metro + buffer)
+const HOUSTON_BOUNDS = {
+  south: 28.95,
+  west: -96.25,
+  north: 30.55,
+  east: -94.50,
+}
+
+function haversineDistanceMiles(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 3958.8
+  const dLat = ((lat2 - lat1) * Math.PI) / 180
+  const dLon = ((lon2 - lon1) * Math.PI) / 180
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+}
+
+// Check if address is within 60 miles of downtown Houston
+const isInServiceArea = (lat: number | undefined, lng: number | undefined): boolean => {
+  if (lat === undefined || lng === undefined) return false
+  return haversineDistanceMiles(lat, lng, HOUSTON_CENTER_LAT, HOUSTON_CENTER_LNG) <= HOUSTON_RADIUS_MILES
 }
 
 // Valid US area codes
@@ -414,16 +436,20 @@ export function SurveyCard() {
 
   const handleAddressSelect = (address: string, details: AddressDetails) => {
     setSurveyData({ ...surveyData, address })
-    setAddressVerified(true)
-    
-    // Check if address is in service area
-    if (!isInServiceArea(details.state)) {
+
+    // Geofence check FIRST. Only mark verified after passing — otherwise a user
+    // who dismisses the out-of-area popup with X/escape can still proceed because
+    // the Continue button only checks addressVerified.
+    if (!isInServiceArea(details.lat, details.lng)) {
       setSelectedState(details.state || "Unknown")
+      setAddressVerified(false)
       setShowOutOfAreaPopup(true)
       return
     }
-    
-    // Auto-advance to next step after address selection (only if in __SERVICE_AREA__ area)
+
+    setAddressVerified(true)
+
+    // Auto-advance to next step after address selection (only if in Houston metro)
     setTimeout(() => {
       setStep(2)
     }, 300)
@@ -554,7 +580,8 @@ export function SurveyCard() {
               value={surveyData.address}
               onChange={(address) => { setSurveyData({ ...surveyData, address }); setAddressVerified(false) }}
               onSelect={handleAddressSelect}
-              placeholder="Start typing your address..."
+              placeholder="123 Main St, Houston, TX..."
+              bounds={HOUSTON_BOUNDS}
             />
             <Button
               onClick={handleNext}
@@ -785,14 +812,14 @@ export function SurveyCard() {
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 mb-4">
               <MapPin className="h-6 w-6 text-amber-600" />
             </div>
-            <DialogTitle className="text-center text-xl">Outside Our Service Area</DialogTitle>
+            <DialogTitle className="text-center text-xl">Houston Metro Only</DialogTitle>
             <DialogDescription className="text-center pt-2">
-              We currently only buy houses in the <strong>DC, Maryland, and Virginia (__SERVICE_AREA__)</strong> area and surrounding suburbs.
+              We currently only buy houses in the <strong>Greater Houston area</strong> — within about 60 miles of downtown Houston.
             </DialogDescription>
           </DialogHeader>
           <div className="mt-2 rounded-lg bg-gray-50 p-4 text-center">
             <p className="text-sm text-gray-600">
-              The address you selected appears to be in <strong>{selectedState}</strong>, which is outside our service area.
+              The address you entered appears to be outside our Houston service area. If you have a Houston-area property to sell, please enter that address instead.
             </p>
           </div>
           <div className="mt-4 flex flex-col gap-3">

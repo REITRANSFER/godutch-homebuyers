@@ -9,6 +9,8 @@ export interface AddressDetails {
   state?: string
   city?: string
   county?: string
+  lat?: number
+  lng?: number
 }
 
 interface LatLngBoundsLiteral {
@@ -88,7 +90,7 @@ export function AddressAutocomplete({
     const autocompleteOptions: google.maps.places.AutocompleteOptions = {
       componentRestrictions: { country: "us" },
       types: ["address"],
-      fields: ["formatted_address", "address_components"],
+      fields: ["formatted_address", "address_components", "geometry"],
     }
     if (bounds) {
       autocompleteOptions.bounds = new google.maps.LatLngBounds(
@@ -125,11 +127,21 @@ export function AddressAutocomplete({
           }
         })
         
+        // Extract lat/lng for radius-based geofencing
+        let lat: number | undefined
+        let lng: number | undefined
+        if (place.geometry?.location) {
+          lat = place.geometry.location.lat()
+          lng = place.geometry.location.lng()
+        }
+
         const details: AddressDetails = {
           formattedAddress: place.formatted_address,
           state,
           city,
           county,
+          lat,
+          lng,
         }
         
         onChange(place.formatted_address)
